@@ -222,8 +222,7 @@ def test_model(model1=None, test_data_loader=None):
 
     for X_b, y_b in test_data_loader:
 
-        X_b = X_b.to(device)
-        y_b = y_b.cpu().detach().numpy()
+        X_b, y_b = X_b.to(device), y_b.to(device)
 
 
         logits = model1(X_b)
@@ -238,6 +237,8 @@ def test_model(model1=None, test_data_loader=None):
         correct = (preds == y_b).sum().item()
 
         preds = preds.cpu().detach().numpy()
+        y_b = y_b.cpu().detach().numpy()
+
 
         accuracy_val = correct / len(test_data_loader.dataset)
         precision_val = precision_score(y_b, preds, average='macro')
