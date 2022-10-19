@@ -104,8 +104,6 @@ def get_model(train_data_loader=None, n_epochs=10):
 # sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
 
-    model = None
-
     # write your code here as per instructions
     # ... your code ...
     # ... your code ...
@@ -123,7 +121,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
     # HINT: You can print sizes of tensors to get an idea of the size of the fc layer required
     # HINT: Flatten function can also be used if required
 
-
+    model = None
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -172,13 +170,15 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
 
     model = cs19b025NN(ch, H, W, num_classes)
     model.to(device)
-    optimizer = optim.Adam(model.parameters)
+    optimizer = optim.Adam(model.parameters())
 
 
     total_loss = 0.0
     correct = 0
 
-    for X_b, y_b in train_data_loader:
+    print("Training Started .....")
+
+    for X_b, y_b in tqdm(train_data_loader):
 
         X_b, y_b = X_b.to(device), y_b.to(device)
 
@@ -197,7 +197,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
         correct = (preds == y_b).sum()
 
     print ('Returning model... (rollnumber: cs19b025)')
-
+    
     return model
   
 # sample invocation torch.hub.load(myrepo,'test_model',model1=model,test_data_loader=test_data_loader,force_reload=True)
