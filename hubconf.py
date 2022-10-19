@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
-from sklearn.metrics import precison_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 def kali():
   print ('kali')
