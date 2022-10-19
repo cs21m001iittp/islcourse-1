@@ -26,13 +26,12 @@ def get_model(train_data_loader=None, n_epochs=10):
 
         labels = labels.union(set(y_b.cpu().detach().numpy()))
 
-
     num_classes = len(labels)
 
 
     class cs19b025NN(nn.Module):
 
-        def __init__(self):
+        def __init__(self, ch, H, W, num_classes):
             super(cs19b025NN, self).__init__()
 
             self.conv_layers = nn.Sequential(
@@ -40,7 +39,7 @@ def get_model(train_data_loader=None, n_epochs=10):
                 nn.Conv2d(8, 16, 3, padding='same'),
             )
 
-            in_features = 16*H*W
+            in_features = 16 * H * W
 
             self.fc = nn.Sequential(
                 nn.Linear(in_features, 2048),
@@ -52,10 +51,15 @@ def get_model(train_data_loader=None, n_epochs=10):
 
         def forward(self, x):
 
-            x = self.conv_layers(x)
-            x = nn.Flatten()(x)
-            x = self.fc(x)
+            feat_maps = self.conv_layers(x)
+            feats = nn.Flatten()(feat_maps)
+            logits = self.fc(feats)
             
+            return logits
+
+
+    model = cs19b025NN(ch, H, W, num_classes)
+
 
 
 
