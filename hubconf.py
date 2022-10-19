@@ -65,7 +65,7 @@ def get_model(train_data_loader=None, n_epochs=10):
         def forward(self, x):
 
             feat_maps = self.conv_layers(x)
-            feats = nn.Flatten()(feat_maps)
+            feats = nn.Flatten(start_dim=1)(feat_maps)
             logits = self.fc(feats)
             
             return logits
@@ -97,10 +97,10 @@ def get_model(train_data_loader=None, n_epochs=10):
 
         probs: torch.Tensor = nn.Softmax(dim=1)(logits)
         preds = probs.argmax(dim=1)
-        correct = (preds == y_b).sum()
+        correct += (preds == y_b).sum().item()
     
 
-
+    print(f"Accuracy of the model: {correct/len(train_data_loader.dataset)}")
     print ('Returning model... (rollnumber: cs19b025)')
     
     return model
@@ -142,37 +142,54 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
 
     num_classes = len(labels)
 
+    class cs19b025_Advanced_NN(nn.Module):
 
-    class cs19b025NN(nn.Module):
+        def __init__(self, config, H, W, num_classes):
 
-        def __init__(self, ch, H, W, num_classes):
-            super(cs19b025NN, self).__init__()
+            super(cs19b025_Advanced_NN, self).__init__()
 
-            self.conv_layers = nn.Sequential(
-                nn.Conv2d(ch, 8, 3, padding='same'),
-                nn.Conv2d(8, 16, 3, padding='same'),
-            )
+            temp = []
 
-            in_features = 16 * H * W
+            for k in config:
+
+                in_ch, out_ch, kernel_size, stride, padding = k
+                
+                temp.append(
+                    nn.Conv2d(in_ch, out_ch, kernel_size, stride, padding=padding)
+                )
+            
+            self.conv_layers = nn.Sequential(*temp)
+
+            def _in_features(H, W, config):
+
+                for k in config:
+                    in_ch, out_ch, kernel_size, stride, padding = k
+
+                    H = H if padding == 'same' else (H - (kernel_size[0]-1) + 2 * padding) / stride
+                    W = W if padding == 'same' else (W - (kernel_size[1]-1) + 2 * padding) / stride
+
+                return H * W * config[-1][1]
+            
+            in_features = _in_features(H, W, config)
 
             self.fc = nn.Sequential(
                 nn.Linear(in_features, 2048),
                 nn.Linear(2048, 1024),
                 nn.Linear(1024, 512),
-                nn.Linear(512, 256),
-                nn.Linear(256, num_classes)
+                nn.Linear(512,  num_classes),
             )
+
 
         def forward(self, x):
 
             feat_maps = self.conv_layers(x)
-            feats = nn.Flatten()(feat_maps)
+            feats = nn.Flatten(start_dim=1)(feat_maps)
             logits = self.fc(feats)
-            
+
             return logits
 
 
-    model = cs19b025NN(ch, H, W, num_classes)
+    model = cs19b025_Advanced_NN(config, H, W, num_classes)
     model.to(device)
     optimizer = optim.Adam(model.parameters())
 
@@ -198,8 +215,9 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
 
         probs: torch.Tensor = nn.Softmax(dim=1)(logits)
         preds = probs.argmax(dim=1)
-        correct = (preds == y_b).sum()
+        correct += (preds == y_b).sum().item()
 
+    print(f"Accuracy of the model: {len(train_data_loader.dataset)}")
     print ('Returning model... (rollnumber: cs19b025)')
     
     return model
