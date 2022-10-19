@@ -27,7 +27,7 @@ def get_model(train_data_loader=None, n_epochs=10):
     #     def __init__(self):
     #         super(cs19b025NN, self).__init__()
 
-    return X_shape, y_shape
+    return X_shape, y_shape, X, y
 
     # model = None
 
