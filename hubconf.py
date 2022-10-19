@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import tqdm
+from tqdm import tqdm
 
 def kali():
   print ('kali')
