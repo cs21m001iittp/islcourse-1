@@ -70,7 +70,7 @@ def get_model(train_data_loader=None, n_epochs=10):
 
     model = cs19b025NN(ch, H, W, num_classes)
     model.to(device)
-    optimizer = optim.Adam(model.parameters)
+    optimizer = optim.Adam(model.parameters())
 
 
     total_loss = 0.0
