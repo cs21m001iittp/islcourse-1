@@ -1,5 +1,5 @@
 import torch
-from torch import nn
+import torch.nn as nn
 
 def kali():
   print ('kali')
@@ -13,21 +13,52 @@ class YourRollNumberNN(nn.Module):
 # sample invocation torch.hub.load(myrepo,'get_model',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 def get_model(train_data_loader=None, n_epochs=10):
 
-    for X_b, y_b in train_data_loader:
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    for X_b, y_b in train_data_loader:
         X = X_b[0]
-        y = y_b[0]
+        (ch, H, W) = X.shape
         break
 
-    X_shape = X.shape
-    y_shape = y.shape
+    labels = set()
 
-    # class cs19b025NN(nn.Module):
+    for X_b, y_b in train_data_loader:
 
-    #     def __init__(self):
-    #         super(cs19b025NN, self).__init__()
+        labels = labels.union(set(y_b.cpu().detach().numpy()))
 
-    return X_shape, y_shape, X, y
+
+    num_classes = len(labels)
+
+
+    class cs19b025NN(nn.Module):
+
+        def __init__(self):
+            super(cs19b025NN, self).__init__()
+
+            self.conv_layers = nn.Sequential(
+                nn.Conv2d(ch, 8, 3, padding='same'),
+                nn.Conv2d(8, 16, 3, padding='same'),
+            )
+
+            in_features = 16*H*W
+
+            self.fc = nn.Sequential(
+                nn.Linear(in_features, 2048),
+                nn.Linear(2048, 1024),
+                nn.Linear(1024, 512),
+                nn.Linear(512, 256),
+                nn.Linear(256, num_classes)
+            )
+
+        def forward(self, x):
+
+            x = self.conv_layers(x)
+            x = nn.Flatten()(x)
+            x = self.fc(x)
+            
+
+
+
 
     # model = None
 
