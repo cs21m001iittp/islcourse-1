@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import tqdm
 
 def kali():
   print ('kali')
@@ -76,7 +77,9 @@ def get_model(train_data_loader=None, n_epochs=10):
     total_loss = 0.0
     correct = 0
 
-    for X_b, y_b in train_data_loader:
+    print("Training Started .....")
+
+    for X_b, y_b in tqdm(train_data_loader):
 
         X_b, y_b = X_b.to(device), y_b.to(device)
 
