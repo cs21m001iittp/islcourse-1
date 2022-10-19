@@ -223,6 +223,8 @@ def test_model(model1=None, test_data_loader=None):
     for X_b, y_b in test_data_loader:
 
         X_b = X_b.to(device)
+        y_b = y_b.cpu().detach().numpy()
+
 
         logits = model1(X_b)
 
@@ -230,16 +232,15 @@ def test_model(model1=None, test_data_loader=None):
 
         total_loss += loss.item()
 
-        probs: torch.Tensor = nn.Softmax(dim=1)(logits)
+        probs = nn.Softmax(dim=1)(logits)
         preds = probs.argmax(dim=1)
 
         correct = (preds == y_b).sum().item()
 
         preds = preds.cpu().detach().numpy()
-        y_b = y_b.cpu().detach().numpy()
 
         accuracy_val = correct / len(test_data_loader.dataset)
-        precision_val = precison_score(y_b, preds, average='macro')
+        precision_val = precision_score(y_b, preds, average='macro')
         recall_val = recall_score(y_b, preds, average='macro')
         f1score_val = f1_score(y_b, preds, average='macro')
 
