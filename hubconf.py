@@ -12,18 +12,35 @@ class YourRollNumberNN(nn.Module):
     
 # sample invocation torch.hub.load(myrepo,'get_model',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 def get_model(train_data_loader=None, n_epochs=10):
-  model = None
 
-  # write your code here as per instructions
-  # ... your code ...
-  # ... your code ...
-  # ... and so on ...
-  # Use softmax and cross entropy loss functions
-  # set model variable to proper object, make use of train_data
-  
-  print ('Returning model... (rollnumber: xx)')
-  
-  return model
+    for X_b, y_b in train_data_loader:
+
+        X = X_b[0]
+        y = y_b[0]
+        break
+
+    X_shape = X.shape
+    y_shape = y.shape
+
+    # class cs19b025NN(nn.Module):
+
+    #     def __init__(self):
+    #         super(cs19b025NN, self).__init__()
+
+    return X_shape, y_shape
+
+    # model = None
+
+    # # write your code here as per instructions
+    # # ... your code ...
+    # # ... your code ...
+    # # ... and so on ...
+    # # Use softmax and cross entropy loss functions
+    # # set model variable to proper object, make use of train_data
+    
+    # print ('Returning model... (rollnumber: xx)')
+    
+    # return model
 
 # sample invocation torch.hub.load(myrepo,'get_model_advanced',train_data_loader=train_data_loader,n_epochs=5, force_reload=True)
 def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
