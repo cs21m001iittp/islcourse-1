@@ -217,7 +217,7 @@ def get_model_advanced(train_data_loader=None, n_epochs=10,lr=1e-4,config=None):
         preds = probs.argmax(dim=1)
         correct += (preds == y_b).sum().item()
 
-    print(f"Accuracy of the model: {len(train_data_loader.dataset)}")
+    print(f"Accuracy of the model: {correct/len(train_data_loader.dataset)}")
     print ('Returning model... (rollnumber: cs19b025)')
     
     return model
