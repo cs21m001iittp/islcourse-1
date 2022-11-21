@@ -2,6 +2,7 @@
 import torch
 from torch import nn
 import torch.optim as optim
+from sklearn.datasets import make_blobs, make_circes, load_digits, 
 
 # You can import whatever standard packages are required
 
@@ -12,11 +13,10 @@ import torch.optim as optim
 ###### PART 1 ######
 
 def get_data_blobs(n_points=100):
-  pass
   # write your code here
   # Refer to sklearn data sets
   X, y = None
-  # write your code ...
+  X, y = make_blobs(n_samples=n_points, centers=3, n_features=2, random_state=0)
   return X,y
 
 def get_data_circles(n_points=100):
@@ -24,6 +24,7 @@ def get_data_circles(n_points=100):
   # write your code here
   # Refer to sklearn data sets
   X, y = None
+  X, y = make_circes(n_samples=n_points, random_state=0)
   # write your code ...
   return X,y
 
@@ -32,6 +33,7 @@ def get_data_mnist():
   # write your code here
   # Refer to sklearn data sets
   X,y = None
+  X, y = load_digits(return_X_y=True)
   # write your code ...
   return X,y
 
