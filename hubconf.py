@@ -116,6 +116,7 @@ def get_paramgrid_lr():
   lr_param_grid = {
     'penalty': ['l1', 'l2'],
     'C': np.logspace(-4, 4, 20),
+    # 'C': [1.0, 2.0],
     'solver': ['liblinear'],
 
   }
@@ -139,7 +140,7 @@ def get_paramgrid_rf():
   # write your code here...
   return rf_param_grid
 
-def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc_ovo']):
+def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc_ovo', 'roc_auc_ovr']):
   
   # you need to invoke sklearn grid search cv function
   # refer to sklearn documentation
@@ -151,24 +152,27 @@ def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None
   # fit the object on X and y input above
   # write your code here...
   grid_search_cv = None
-  grid_search_cv = model_selection.GridSearchCV(model1, param_grid, cv=cv, scoring=metrics, refit='accuracy').fit(X, y)
-
-  print(grid_search_cv.cv_results_)
-  
+  grid_search_cv = model_selection.GridSearchCV(model1, param_grid, cv=cv, scoring=metrics, refit=False).fit(X, y)
+  cv_results = grid_search_cv.cv_results_
   # metric of choice will be asked here, refer to the-scoring-parameter-defining-model-evaluation-rules of sklearn documentation
-  
+
   # refer to cv_results_ dictonary
   # return top 1 score for each of the metrics given, in the order given in metrics=... list
-
   
   top1_scores = []
+
+  for metric in metrics:
+    i = list(cv_results[f'rank_test_{metric}']).index(1)
+    top_score = list(cv_results[f'mean_test_{metric}'])[i]
+    top1_scores.append(top_score)
   
   return top1_scores
 
 X, y = get_data_mnist()
-param_grid = get_paramgrid_lr()
 lr = LogisticRegression()
-perform_gridsearch_cv_multimetric(lr, param_grid, X=X, y=y)
+param_grid = get_paramgrid_lr()
+top_scores = perform_gridsearch_cv_multimetric(lr, param_grid, X=X, y=y)
+print(top_scores)
 
 
 '''
