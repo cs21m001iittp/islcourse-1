@@ -251,7 +251,7 @@ def get_loss_on_single_point(mynn, x0, y0):
   y_pred, xencdec = mynn(X0)
   lossval = mynn.loss_fn(X0,Y0,y_pred,xencdec)
   # the lossval should have grad_fn attribute set
-  return lossval
+  return lossval.item()
 
 def train_combined_encdec_predictor(mynn, X, y, epochs=11):
   # X, y are provided as tensor
