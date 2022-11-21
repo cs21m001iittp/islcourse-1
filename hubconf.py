@@ -4,7 +4,11 @@ from torch import nn
 import torch.optim as optim
 from sklearn.datasets import make_blobs, make_circles, load_digits
 from sklearn.cluster import KMeans
-from sklearn.metrics import homogeneity_completeness_v_measure
+from sklearn import metrics
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import preprocessing
+from sklearn import model_selection
 
 # You can import whatever standard packages are required
 
@@ -59,7 +63,7 @@ def compare_clusterings(ypred_1=None,ypred_2=None):
   pass
   # refer to sklearn documentation for homogeneity, completeness and vscore
   h,c,v = 0,0,0 # you need to write your code to find proper values
-  h, c, v = homogeneity_completeness_v_measure(ypred_1, ypred_2)
+  h, c, v = metrics.homogeneity_completeness_v_measure(ypred_1, ypred_2)
   return h,c,v
 
 '''
@@ -75,24 +79,33 @@ print(h, c, v)
 ###### PART 2 ######
 
 def build_lr_model(X=None, y=None):
-  pass
-  lr_model = None
   # write your code...
   # Build logistic regression, refer to sklearn
+  scaler = preprocessing.StandardScaler().fit(X)
+  X_train = scaler.transform(X)
+  lr_model = None
+  lr_model = LogisticRegression(random_state=0).fit(X_train, y)
   return lr_model
 
 def build_rf_model(X=None, y=None):
-  pass
-  rf_model = None
   # write your code...
   # Build Random Forest classifier, refer to sklearn
+  rf_model = None
+  rf_model = RandomForestClassifier(random_state=0, max_depth=5).fit(X, y)
   return rf_model
 
-def get_metrics(model=None,X=None,y=None):
-  pass
+def get_metrics(model1=None,X=None,y=None):
   # Obtain accuracy, precision, recall, f1score, auc score - refer to sklearn metrics
   acc, prec, rec, f1, auc = 0,0,0,0,0
   # write your code here...
+  ypred = model1.predict(X)
+
+  acc = metrics.accuracy_score(y, ypred)
+  prec = metrics.precision_score(y, ypred, average='macro')
+  rec = metrics.recall_score(y, ypred, average='macro')
+  f1 = metrics.f1_score(y, ypred, average='macro')
+  fpr, tpr, thresholds = metrics.roc_curve(y, ypred, pos_label=2)
+  auc = metrics.auc(fpr, tpr)
   return acc, prec, rec, f1, auc
 
 def get_paramgrid_lr():
@@ -113,7 +126,7 @@ def get_paramgrid_rf():
   # write your code here...
   return rf_param_grid
 
-def perform_gridsearch_cv_multimetric(model=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc']):
+def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None, y=None, metrics=['accuracy','roc_auc']):
   
   # you need to invoke sklearn grid search cv function
   # refer to sklearn documentation
@@ -121,10 +134,13 @@ def perform_gridsearch_cv_multimetric(model=None, param_grid=None, cv=5, X=None,
   
   # metrics = [] the evaluation program can change what metrics to choose
   
-  grid_search_cv = None
   # create a grid search cv object
   # fit the object on X and y input above
   # write your code here...
+  grid_search_cv = None
+  grid_search_cv = model_selection.GridSearchCV(model1, param_grid, cv=cv, scoring=metrics).fit(X, y)
+
+  print(grid_search_cv.cv_results_)
   
   # metric of choice will be asked here, refer to the-scoring-parameter-defining-model-evaluation-rules of sklearn documentation
   
@@ -134,6 +150,18 @@ def perform_gridsearch_cv_multimetric(model=None, param_grid=None, cv=5, X=None,
   top1_scores = []
   
   return top1_scores
+
+'''
+X, y = get_data_mnist()
+lr = build_lr_model(X, y)
+rf = build_rf_model(X, y)
+lr_metrics = get_metrics(lr, X, y)
+rf_metrics = get_metrics(rf, X, y)
+
+print(lr_metrics)
+print(rf_metrics)
+'''
+
 
 ###### PART 3 ######
 
