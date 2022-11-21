@@ -245,8 +245,11 @@ def get_mnist_tensor():
   return X,y
 
 def get_loss_on_single_point(mynn, x0, y0):
-  y_pred, xencdec = mynn(x0)
-  lossval = mynn.loss_fn(x0,y0,y_pred,xencdec)
+  X0 = torch.unsqueeze(x0, dim=0)   
+  Y0 = torch.unsqueeze(y0, dim=0)
+
+  y_pred, xencdec = mynn(X0)
+  lossval = mynn.loss_fn(X0,Y0,y_pred,xencdec)
   # the lossval should have grad_fn attribute set
   return lossval
 
@@ -268,7 +271,6 @@ def train_combined_encdec_predictor(mynn, X, y, epochs=11):
   return mynn
 
 
-'''
 X, y = get_mnist_tensor()
 print(X.dtype, X.shape, y.shape)
 
@@ -279,11 +281,13 @@ print(y_pred.shape, x_dec.shape)
 loss = model.loss_fn(X, y, y_pred, x_dec)
 print(loss)
 
-X1 = torch.unsqueeze(X[0], dim=0)
-y1 = torch.unsqueeze(y[0], dim=0)
-y_pred, x_dec = model(X1)
-loss = model.loss_fn(X1, y1, y_pred, x_dec)
+# X1 = torch.unsqueeze(X[0], dim=0)
+# y1 = torch.unsqueeze(y[0], dim=0)
+# y_pred, x_dec = model(X1)
+# loss = model.loss_fn(X1, y1, y_pred, x_dec)
+# print(loss)
+loss = get_loss_on_single_point(model, X[0], y[0])
 print(loss)
 
+
 model = train_combined_encdec_predictor(model, X, y, epochs=10)
-'''
