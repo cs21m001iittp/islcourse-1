@@ -129,12 +129,10 @@ def get_paramgrid_rf():
   # n_estimators: 1, 10, 100
   # criterion: gini, entropy
   # maximum depth: 1, 10, None  
-  rf_param_grid = None
   rf_param_grid = {
-    'n_estimators': list(range(10,101,10)),
-    'max_features': list(range(6,32,5)),
+    'n_estimators': [1, 10, 100],
     'criterion': ['gini', 'entropy', 'log_loss'],
-    'max_depth': [2, 5, 10, None]
+    'max_depth': [1, 10, None]
   }
   # refer to sklearn documentation on grid search and random forest classifier
   # write your code here...
@@ -169,14 +167,13 @@ def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None
   return top1_scores
 
 
-'''
 
+'''
 X, y = get_data_mnist()
-lr = LogisticRegression()
-param_grid = get_paramgrid_lr()
+lr = RandomForestClassifier()
+param_grid = get_paramgrid_rf()
 top_scores = perform_gridsearch_cv_multimetric(lr, param_grid, X=X, y=y)
 print(top_scores)
-
 
 X, y = get_data_mnist()
 lr = build_lr_model(X, y)
