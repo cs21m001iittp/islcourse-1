@@ -2,6 +2,7 @@
 import torch
 from torch import nn
 import torch.optim as optim
+import numpy as np
 from sklearn.datasets import make_blobs, make_circles, load_digits
 from sklearn.cluster import KMeans
 from sklearn import metrics
@@ -112,6 +113,12 @@ def get_paramgrid_lr():
   # you need to return parameter grid dictionary for use in grid search cv
   # penalty: l1 or l2
   lr_param_grid = None
+  lr_param_grid = {
+    'penalty': ['l1', 'l2'],
+    'C': np.logspace(-4, 4, 20),
+    'solver': ['liblinear'],
+
+  }
   # refer to sklearn documentation on grid search and logistic regression
   # write your code here...
   return lr_param_grid
@@ -122,6 +129,12 @@ def get_paramgrid_rf():
   # criterion: gini, entropy
   # maximum depth: 1, 10, None  
   rf_param_grid = None
+  rf_param_grid = {
+    'n_estimators': list(range(10,101,10)),
+    'max_features': list(range(6,32,5)),
+    'criterion': ['gini', 'entropy', 'log_loss'],
+    'max_depth': [2, 5, 10, None]
+  }
   # refer to sklearn documentation on grid search and random forest classifier
   # write your code here...
   return rf_param_grid
@@ -138,7 +151,7 @@ def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None
   # fit the object on X and y input above
   # write your code here...
   grid_search_cv = None
-  grid_search_cv = model_selection.GridSearchCV(model1, param_grid, cv=cv, scoring=metrics).fit(X, y)
+  grid_search_cv = model_selection.GridSearchCV(model1, param_grid, cv=cv, scoring=metrics, refit='accuracy').fit(X, y)
 
   print(grid_search_cv.cv_results_)
   
@@ -146,10 +159,17 @@ def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None
   
   # refer to cv_results_ dictonary
   # return top 1 score for each of the metrics given, in the order given in metrics=... list
+
   
   top1_scores = []
   
   return top1_scores
+
+X, y = get_data_mnist()
+param_grid = get_paramgrid_lr()
+lr = LogisticRegression()
+perform_gridsearch_cv_multimetric(lr, param_grid, X=X, y=y)
+
 
 '''
 X, y = get_data_mnist()
@@ -160,7 +180,6 @@ rf_metrics = get_metrics(rf, X, y)
 
 print(lr_metrics)
 print(rf_metrics)
-'''
 
 
 ###### PART 3 ######
@@ -236,3 +255,4 @@ def train_combined_encdec_predictor(mynn=None,X,y, epochs=11):
     
   return mynn
     
+'''
