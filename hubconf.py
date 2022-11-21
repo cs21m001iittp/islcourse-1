@@ -187,22 +187,22 @@ rf_metrics = get_metrics(rf, X, y)
 print(lr_metrics)
 print(rf_metrics)
 '''
-
+'''
 ###### PART 3 ######
 
 class MyNN(nn.Module):
   def __init__(self,inp_dim=64,hid_dim=13,num_classes=10):
     super(MyNN,self)
     
-    self.fc_encoder = None # write your code inp_dim to hid_dim mapper
-    self.fc_decoder = None # write your code hid_dim to inp_dim mapper
-    self.fc_classifier = None # write your code to map hid_dim to num_classes
+    self.fc_encoder = nn.Linear(inp_dim, hid_dim) # write your code inp_dim to hid_dim mapper
+    self.fc_decoder = nn.Linear(hid_dim, inp_dim) # write your code hid_dim to inp_dim mapper
+    self.fc_classifier = nn.Linear(hid_dim, num_classes) # write your code to map hid_dim to num_classes
     
-    self.relu = None #write your code - relu object
-    self.softmax = None #write your code - softmax object
+    self.relu = nn.ReLU() #write your code - relu object
+    self.softmax = nn.Softmax(dim=1) #write your code - softmax object
     
   def forward(self,x):
-    x = None # write your code - flatten x
+    x = nn.Flatten() # write your code - flatten x
     x_enc = self.fc_encoder(x)
     x_enc = self.relu(x_enc)
     
@@ -261,3 +261,4 @@ def train_combined_encdec_predictor(mynn=None,X,y, epochs=11):
     
   return mynn
     
+'''
