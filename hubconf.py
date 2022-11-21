@@ -268,7 +268,7 @@ def train_combined_encdec_predictor(mynn, X, y, epochs=11):
   return mynn
 
 
-
+'''
 X, y = get_mnist_tensor()
 print(X.dtype, X.shape, y.shape)
 
@@ -286,3 +286,4 @@ loss = model.loss_fn(X1, y1, y_pred, x_dec)
 print(loss)
 
 model = train_combined_encdec_predictor(model, X, y, epochs=10)
+'''
