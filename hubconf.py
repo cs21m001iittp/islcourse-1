@@ -168,6 +168,9 @@ def perform_gridsearch_cv_multimetric(model1=None, param_grid=None, cv=5, X=None
   
   return top1_scores
 
+
+'''
+
 X, y = get_data_mnist()
 lr = LogisticRegression()
 param_grid = get_paramgrid_lr()
@@ -175,7 +178,6 @@ top_scores = perform_gridsearch_cv_multimetric(lr, param_grid, X=X, y=y)
 print(top_scores)
 
 
-'''
 X, y = get_data_mnist()
 lr = build_lr_model(X, y)
 rf = build_rf_model(X, y)
@@ -184,7 +186,7 @@ rf_metrics = get_metrics(rf, X, y)
 
 print(lr_metrics)
 print(rf_metrics)
-
+'''
 
 ###### PART 3 ######
 
@@ -259,4 +261,3 @@ def train_combined_encdec_predictor(mynn=None,X,y, epochs=11):
     
   return mynn
     
-'''
