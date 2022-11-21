@@ -1,13 +1,21 @@
-# kali
 import torch
 from torch import nn
 import torch.optim as optim
-import numpy as np
-from sklearn.datasets import make_blobs, make_circles, load_digits
-from sklearn.cluster import KMeans
-from sklearn import metrics
-from sklearn.linear_model import LogisticRegression
+
+import sklearn
+
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.datasets import make_blobs
+from sklearn.datasets import make_circles, load_digits
+from sklearn.cluster import KMeans
+import numpy as np
+from sklearn.metrics.cluster import homogeneity_score,completeness_score,v_measure_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, roc_auc_score
+from sklearn import metrics
 from sklearn import preprocessing
 from sklearn import model_selection
 
