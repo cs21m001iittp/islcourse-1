@@ -187,13 +187,15 @@ rf_metrics = get_metrics(rf, X, y)
 print(lr_metrics)
 print(rf_metrics)
 '''
-'''
+
 ###### PART 3 ######
 
 class MyNN(nn.Module):
   def __init__(self,inp_dim=64,hid_dim=13,num_classes=10):
-    super(MyNN,self)
+    super(MyNN,self).__init__()
     
+    self.num_classes = num_classes
+
     self.fc_encoder = nn.Linear(inp_dim, hid_dim) # write your code inp_dim to hid_dim mapper
     self.fc_decoder = nn.Linear(hid_dim, inp_dim) # write your code hid_dim to inp_dim mapper
     self.fc_classifier = nn.Linear(hid_dim, num_classes) # write your code to map hid_dim to num_classes
@@ -202,7 +204,7 @@ class MyNN(nn.Module):
     self.softmax = nn.Softmax(dim=1) #write your code - softmax object
     
   def forward(self,x):
-    x = nn.Flatten() # write your code - flatten x
+    x = nn.Flatten()(x) # write your code - flatten x
     x_enc = self.fc_encoder(x)
     x_enc = self.relu(x_enc)
     
@@ -218,13 +220,14 @@ class MyNN(nn.Module):
     
     # class prediction loss
     # yground needs to be one hot encoded - write your code
-    lc1 = None # write your code for cross entropy between yground and y_pred, advised to use torch.mean()
-    
+    yground_1h = nn.functional.one_hot(yground, num_classes=self.num_classes)
+
+    # write your code for cross entropy between yground and y_pred, advised to use torch.mean()
+    lc1 = -torch.mean(yground_1h*torch.log(y_pred+0.00001))
     # auto encoding loss
     lc2 = torch.mean((x - xencdec)**2)
     
     lval = lc1 + lc2
-    
     return lval
     
 def get_mynn(inp_dim=64,hid_dim=13,num_classes=10):
@@ -236,16 +239,18 @@ def get_mnist_tensor():
   # download sklearn mnist
   # convert to tensor
   X, y = None, None
+  X, y = get_data_mnist()
+  X, y = torch.tensor(X), torch.tensor(y)
   # write your code
   return X,y
 
-def get_loss_on_single_point(mynn=None,x0,y0):
+def get_loss_on_single_point(mynn, x0, y0):
   y_pred, xencdec = mynn(x0)
   lossval = mynn.loss_fn(x0,y0,y_pred,xencdec)
   # the lossval should have grad_fn attribute set
   return lossval
 
-def train_combined_encdec_predictor(mynn=None,X,y, epochs=11):
+def train_combined_encdec_predictor(mynn, X, y, epochs=11):
   # X, y are provided as tensor
   # perform training on the entire data set (no batches etc.)
   # for each epoch, update weights
@@ -257,8 +262,27 @@ def train_combined_encdec_predictor(mynn=None,X,y, epochs=11):
     ypred, Xencdec = mynn(X)
     lval = mynn.loss_fn(X,y,ypred,Xencdec)
     lval.backward()
-    optimzer.step()
+    optimizer.step()
+    print(f"Epoch {i+1}: ", lval.item())
     
   return mynn
-    
-'''
+
+
+
+X, y = get_mnist_tensor()
+print(X.dtype, X.shape, y.shape)
+
+model = get_mynn()
+y_pred, x_dec = model(X)
+print(y_pred.shape, x_dec.shape)
+
+loss = model.loss_fn(X, y, y_pred, x_dec)
+print(loss)
+
+X1 = torch.unsqueeze(X[0], dim=0)
+y1 = torch.unsqueeze(y[0], dim=0)
+y_pred, x_dec = model(X1)
+loss = model.loss_fn(X1, y1, y_pred, x_dec)
+print(loss)
+
+model = train_combined_encdec_predictor(model, X, y, epochs=10)
